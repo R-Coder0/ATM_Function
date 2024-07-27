@@ -1,76 +1,117 @@
 import json
-
-account_data = {
-    "Account_number" : '123456789456',
-    "Name":'Rishabh Pratap',
-    "Account_type":'Savings',
-    "ATM_pin" : '5486',
-    "Account_balance": 4000.0,
-    "Phone_number" : '987654321'
-}
-
 from win32com.client import Dispatch
+import os
 
-speak = Dispatch("SAPI.SpVoice")
-speak.Voice = speak.GetVoices().Item(0)
-speak.Speak("Wecome to HDFC bank how may i help you today")
+# Path to the JSON file
+JSON_FILE_PATH = os.path.join(os.path.dirname(__file__), 'account.json')
 
-account_number = input("Enter you account number : ")
-from win32com.client import Dispatch
+# Initialize text-to-speech
+def speak(text):
+    speaker = Dispatch("SAPI.SpVoice")
+    speaker.Voice = speaker.GetVoices().Item(0)
+    speaker.Speak(text)
 
-speak = Dispatch("SAPI.SpVoice")
-speak.Voice = speak.GetVoices().Item(0)
-speak.Speak("Enter you account number")
+# Load account data from JSON file
+def load_account_data():
+    with open(JSON_FILE_PATH, 'r') as file:
+        return json.load(file)
 
-if account_number != account_data['Account_number']:
-    print("Invalid account number. Transaction denied!!")
-else:
-    atm_pin = input("Enter the ATM pin : ")
-    from win32com.client import Dispatch
+# Save account data to JSON file
+def save_account_data(data):
+    with open(JSON_FILE_PATH, 'w') as file:
+        json.dump(data, file, indent=4)
 
-    speak = Dispatch("SAPI.SpVoice")
-    speak.Voice = speak.GetVoices().Item(0)
-    speak.Speak("Enter you atm pin")
+# Register a new account
+def register_account():
+    speak("Please provide your account details for registration.")
+    account_number = input("Enter new account number: ")
+    name = input("Enter your name: ")
+    account_type = input("Enter account type (Current/Savings): ")
+    atm_pin = input("Enter new ATM pin: ")
+    phone_number = input("Enter your phone number: ")
+    
+    new_account = {
+        "Account_number": account_number,
+        "Name": name,
+        "Account_type": account_type,
+        "ATM_pin": atm_pin,
+        "Account_balance": 0.0,  # Initial balance
+        "Phone_number": phone_number
+    }
+    
+    data = load_account_data()
+    data['accounts'].append(new_account)
+    save_account_data(data)
+    
+    speak("Registration successful.")
+    print("Registration successful.")
 
-    if atm_pin != account_data["ATM_pin"] :
-       print("Invalid ATM pin. Transaction denied!!")
-       speak = Dispatch("SAPI.SpVoice")
-       speak.Voice = speak.GetVoices().Item(0)
-       speak.Speak("Transaction Denied")
-    else:
-        account_type = input("Enter the account type Current/Savings : ")
-        if account_type != account_data["Account_type"]:
-            print("Invalid account type. Transaction denied!!")
+# Main function to handle transactions
+def main():
+    speak("Welcome to HDFC bank. How may I help you today?")
+    account_data = load_account_data()
+    
+    account_number = input("Enter your account number: ")
+    speak("Enter your account number.")
+    
+    # Find the account in the data
+    account = next((acc for acc in account_data['accounts'] if acc['Account_number'] == account_number), None)
+    
+    if not account:
+        speak("Account not found. Would you like to register? (yes/no)")
+        if input("Account not found. Would you like to register? (yes/no): ").lower() == 'yes':
+            register_account()
         else:
-            mobile_number = input("Enter your phone number : ")
-            if mobile_number != account_data["Phone_number"]:
-                print("Invalid phone number. Transaction denied!!")
-            else:
-                try:
-                    withdraw_amount = float(input("Enter your amount to withdraw : "))
-                except ValueError:
-                    print("Invalid amount enter. Transaction denied")
-                else:
-                    if withdraw_amount > account_data["Account_balance"]:
-                        print("Insufficient balance. Transaction denied!!")
-                        from win32com.client import Dispatch
+            speak("Transaction denied.")
+            print("Transaction denied.")
+        return
+    
+    atm_pin = input("Enter the ATM pin: ")
+    speak("Enter your ATM pin.")
+    
+    if atm_pin != account["ATM_pin"]:
+        speak("Invalid ATM pin. Transaction denied.")
+        print("Invalid ATM pin. Transaction denied.")
+        return
+    
+    account_type = input("Enter the account type (Current/Savings): ")
+    speak("Enter the account type.")
+    
+    if account_type != account["Account_type"]:
+        speak("Invalid account type. Transaction denied.")
+        print("Invalid account type. Transaction denied.")
+        return
+    
+    mobile_number = input("Enter your phone number: ")
+    speak("Enter your phone number.")
+    
+    if mobile_number != account["Phone_number"]:
+        speak("Invalid phone number. Transaction denied.")
+        print("Invalid phone number. Transaction denied.")
+        return
+    
+    try:
+        withdraw_amount = float(input("Enter the amount to withdraw: "))
+        speak("Enter the amount to withdraw.")
+    except ValueError:
+        speak("Invalid amount entered. Transaction denied.")
+        print("Invalid amount entered. Transaction denied.")
+        return
+    
+    if withdraw_amount > account["Account_balance"]:
+        speak("Insufficient balance. Transaction denied.")
+        print("Insufficient balance. Transaction denied.")
+        return
+    
+    account["Account_balance"] -= withdraw_amount
+    speak(f"Transaction successful. Your current balance is: {account['Account_balance']}.")
+    print(f"Transaction successful. Your current balance is: {account['Account_balance']}")
+    
+    # Save updated account data
+    save_account_data(account_data)
+    speak("Transaction successful.")
+    print("Updated Account data is:")
+    print(json.dumps(account, indent=4))
 
-                        speak = Dispatch("SAPI.SpVoice")
-                        speak.Voice = speak.GetVoices().Item(0)
-                        speak.Speak("Insuficent Balance")
-                    else:
-                        account_data["Account_balance"] -= withdraw_amount
-                        print(f"Transaction successfull. Your current balance is : {account_data['Account_balance']}")
-                        from win32com.client import Dispatch
-
-                        speak = Dispatch("SAPI.SpVoice")
-                        speak.Voice = speak.GetVoices().Item(0)
-                        speak.Speak("Transaction Successfull.")
-                        
-                         
-                        
-                        update_account_data = json.dumps(account_data, indent=4)
-                        print(f"Updated Account data is :\n {update_account_data}")
-                        
-                    
-        
+if __name__ == "__main__":
+    main()

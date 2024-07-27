@@ -1,0 +1,44 @@
+{
+    "accounts": [
+        {
+            "Account_number": "123456789456",
+            "Name": "Rishabh Pratap",
+            "Account_type": "Savings",
+            "ATM_pin": "5486",
+            "Account_balance": 1500.0,
+            "Phone_number": "9876543210"
+        },
+        {
+            "Account_number": "987654321123",
+            "Name": "Ananya Sharma",
+            "Account_type": "Current",
+            "ATM_pin": "1234",
+            "Account_balance": 10000.0,
+            "Phone_number": "8765432109"
+        },
+        {
+            "Account_number": "456123789654",
+            "Name": "Rahul Verma",
+            "Account_type": "Savings",
+            "ATM_pin": "7890",
+            "Account_balance": 7500.0,
+            "Phone_number": "7654321098"
+        },
+        {
+            "Account_number": "321654987321",
+            "Name": "Sneha Kapoor",
+            "Account_type": "Current",
+            "ATM_pin": "4567",
+            "Account_balance": 8500.0,
+            "Phone_number": "6543210987"
+        },
+        {
+            "Account_number": "654789321456",
+            "Name": "Vikram Singh",
+            "Account_type": "Savings",
+            "ATM_pin": "9876",
+            "Account_balance": 6200.0,
+            "Phone_number": "5432109876"
+        }
+    ]
+}
