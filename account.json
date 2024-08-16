@@ -39,6 +39,33 @@
             "ATM_pin": "9876",
             "Account_balance": 6200.0,
             "Phone_number": "5432109876"
+        },
+        {
+            "Account_number": "75452000300",
+            "Name": "Rishabh Sharma",
+            "Account_type": "Current",
+            "ATM_pin": "2525",
+            "Account_balance": 0.0,
+            "Phone_number": "7542003073",
+            "Email": "rishabhpratap008@gmail.com"
+        },
+        {
+            "Account_number": "789456123456789",
+            "Name": "Prerna Yadav",
+            "Account_type": "Savings",
+            "ATM_pin": "2626",
+            "Account_balance": 25000.0,
+            "Phone_number": "753159456",
+            "Email": "prernaydv523@gmail.com"
+        },
+        {
+            "Account_number": "10100100010000",
+            "Name": "Preeti Yadav",
+            "Account_type": "Savings",
+            "ATM_pin": "2727",
+            "Account_balance": 550000.0,
+            "Phone_number": "7894561237",
+            "Email": "rishabhpratap008@gmail.com"
         }
     ]
 }
