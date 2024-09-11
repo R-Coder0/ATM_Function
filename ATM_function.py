@@ -293,7 +293,6 @@ def login(frame, root):
 
     tk.Button(frame, text="Login", command=verify_login, width=20, bg="lightblue", font=("Arial", 14)).pack(pady=10)
 
-
 def show_main_menu(frame, root):
     for widget in frame.winfo_children():
         widget.destroy()
