@@ -39,69 +39,6 @@
             "ATM_pin": "9876",
             "Account_balance": 6200.0,
             "Phone_number": "5432109876"
-        },
-        {
-            "Account_number": "75452000300",
-            "Name": "Rishabh Sharma",
-            "Account_type": "Current",
-            "ATM_pin": "2525",
-            "Account_balance": 0.0,
-            "Phone_number": "7542003073",
-            "Email": "rishabhpratap008@gmail.com"
-        },
-        {
-            "Account_number": "789456123456789",
-            "Name": "Prerna Yadav",
-            "Account_type": "Savings",
-            "ATM_pin": "2626",
-            "Account_balance": 25000.0,
-            "Phone_number": "753159456",
-            "Email": "prernaydv523@gmail.com"
-        },
-        {
-            "Account_number": "10100100010000",
-            "Name": "Preeti Yadav",
-            "Account_type": "Savings",
-            "ATM_pin": "2727",
-            "Account_balance": 550000.0,
-            "Phone_number": "7894561237",
-            "Email": "rishabhpratap008@gmail.com"
-        },
-        {
-            "Account_number": "ACC85689158",
-            "Name": "Rishabh Pratap",
-            "Account_type": "Savings",
-            "ATM_pin": "2525",
-            "Account_balance": 250000.0,
-            "Phone_number": "7542003073",
-            "Email": "rcoder00@gmail.com"
-        },
-        {
-            "Account_number": "ACC17500144",
-            "Name": "Raja Singh",
-            "Account_type": "Savings",
-            "ATM_pin": "2500",
-            "Account_balance": 5000.0,
-            "Phone_number": "7542003033",
-            "Email": "rcoder00@gmail.com"
-        },
-        {
-            "Account_number": "ACC37732767",
-            "Name": "rohit kumar",
-            "Account_type": "Savings",
-            "ATM_pin": "1234",
-            "Account_balance": 50000000000.0,
-            "Phone_number": "9718292990",
-            "Email": "rkt6543@gmail.com"
-        },
-        {
-            "Account_number": "ACC35286592",
-            "Name": "Rishabh Pratap",
-            "Account_type": "Savings",
-            "ATM_pin": "2525",
-            "Account_balance": 25000.0,
-            "Phone_number": "7542451524",
-            "Email": "rcoder00@gmail.com"
         }
     ]
 }

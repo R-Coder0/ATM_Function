@@ -8,23 +8,28 @@ from email.mime.multipart import MIMEMultipart
 import tkinter as tk
 from tkinter import simpledialog, messagebox
 
+# Define the path to your JSON file
 JSON_FILE_PATH = os.path.join(os.path.dirname(__file__), 'account.json')
 
+# Function to make the program speak using AI voice
 def speak(text):
     speaker = Dispatch("SAPI.SpVoice")
     speaker.Voice = speaker.GetVoices().Item(0)
     speaker.Speak(text)
 
+# Load account data from a JSON file
 def load_account_data():
     if not os.path.exists(JSON_FILE_PATH):
         return {"accounts": []}
     with open(JSON_FILE_PATH, 'r') as file:
         return json.load(file)
 
+# Save account data to a JSON file
 def save_account_data(data):
     with open(JSON_FILE_PATH, 'w') as file:
         json.dump(data, file, indent=4)
 
+# Send OTP via email
 def send_otp(email, otp):
     sender_email = "rcoder00@gmail.com"
     sender_password = "rnda bgep ybji vufr"
@@ -43,14 +48,18 @@ def send_otp(email, otp):
         server.login(sender_email, sender_password)
         server.sendmail(sender_email, email, message.as_string())
         server.quit()
+        speak("OTP has been sent successfully to the email.")
         return True
     except Exception as e:
         print(f"Error sending email: {e}")
+        speak("Failed to send OTP. Please try again.")
         return False
 
+# Generate a random account number
 def generate_account_number():
     return "ACC" + str(random.randint(10000000, 99999999))
 
+# Send registration details via email
 def send_registration_details(email, account_details):
     sender_email = "rcoder00@gmail.com"
     sender_password = "rnda bgep ybji vufr"
@@ -81,23 +90,30 @@ def send_registration_details(email, account_details):
         server.login(sender_email, sender_password)
         server.sendmail(sender_email, email, message.as_string())
         server.quit()
+        speak("Registration details have been sent to your email.")
     except Exception as e:
         print(f"Error sending email: {e}")
+        speak("Failed to send registration details.")
 
+# Register new account
 def register_account(frame, root):
     for widget in frame.winfo_children():
         widget.destroy()
 
+    speak("Registering a new account.")
+    
     tk.Label(frame, text="Register New Account", font=("Arial", 20, "bold")).pack(pady=10)
     
     tk.Label(frame, text="Account Number").pack(pady=5)
     account_number = generate_account_number()
     tk.Label(frame, text=account_number, font=("Arial", 12, "bold")).pack()
 
+    speak("Please enter your name.")
     tk.Label(frame, text="Enter Name").pack(pady=5)
     name_entry = tk.Entry(frame, width=40)
     name_entry.pack()
 
+    speak("Please select the account type.")
     tk.Label(frame, text="Select Account Type").pack(pady=5)
     account_type_var = tk.StringVar(value="Savings")
     
@@ -107,26 +123,30 @@ def register_account(frame, root):
     tk.Radiobutton(account_type_frame, text="Savings", variable=account_type_var, value="Savings").pack(side="left", padx=10)
     tk.Radiobutton(account_type_frame, text="Current", variable=account_type_var, value="Current").pack(side="left", padx=10)
 
+    speak("Please enter a 4-digit ATM PIN.")
     tk.Label(frame, text="Enter ATM PIN").pack(pady=5)
     atm_pin_entry = tk.Entry(frame, show="*", width=40)
     atm_pin_entry.pack()
 
+    speak("Please enter your phone number.")
     tk.Label(frame, text="Enter Phone Number").pack(pady=5)
     phone_number_entry = tk.Entry(frame, width=40)
     phone_number_entry.pack()
 
+    speak("Please enter your email address.")
     tk.Label(frame, text="Enter Email Address").pack(pady=5)
     email_entry = tk.Entry(frame, width=40)
     email_entry.pack()
 
     def submit_registration():
-        name = name_entry.get().title()
+        name = name_entry.get().strip().title()
         account_type = account_type_var.get()
         atm_pin = atm_pin_entry.get()
         phone_number = phone_number_entry.get()
         email = email_entry.get()
 
         otp = str(random.randint(100000, 999999))
+        speak("An OTP is being generated.")
         print(f"Generated OTP: {otp}")  # Debugging statement
         if send_otp(email, otp):
             speak("An OTP has been sent to your email address.")
@@ -140,7 +160,8 @@ def register_account(frame, root):
                 print(f"Entered OTP: {entered_otp}")  # Debugging statement
                 if entered_otp == otp:
                     print("OTP matched")  # Debugging statement
-                    # Create a custom window for entering the initial deposit
+                    speak("OTP matched successfully.")
+                    
                     deposit_window = tk.Toplevel(root)
                     deposit_window.title("Initial Deposit")
                     deposit_window.geometry("400x250")
@@ -172,13 +193,14 @@ def register_account(frame, root):
                             deposit_window.destroy()
                             show_main_menu(frame, root)
                         except ValueError:
+                            speak("Invalid amount entered. Please try again.")
                             tk.Label(deposit_window, text="Please enter a valid amount.", fg="red", font=("Arial", 12)).pack()
 
                     tk.Button(deposit_window, text="Confirm", command=confirm_deposit, width=15, bg="lightgreen", font=("Arial", 12)).pack(pady=20)
 
                 else:
+                    speak("Invalid OTP. Please try again.")
                     print("OTP did not match")  # Debugging statement
-                    speak("Invalid OTP. Registration failed.")
 
             verify_button = tk.Button(frame, text="Verify OTP", command=verify_otp, width=20, bg="lightblue")
             verify_button.pack(pady=10)
@@ -189,10 +211,13 @@ def register_account(frame, root):
     submit_button = tk.Button(frame, text="Submit", command=submit_registration, width=20, bg="lightgreen")
     submit_button.pack(pady=20)
 
+# Handle transaction (Withdraw and Deposit)
 def handle_transaction(account, frame, root):
     for widget in frame.winfo_children():
         widget.destroy()
 
+    speak(f"Your current balance is {account['Account_balance']:.2f} rupees.")
+    
     balance_label = tk.Label(frame, text=f"Account Balance: ₹{account['Account_balance']:.2f}", font=("Arial", 14))
     balance_label.pack(pady=10)
 
@@ -200,122 +225,146 @@ def handle_transaction(account, frame, root):
         balance_label.config(text=f"Account Balance: ₹{account['Account_balance']:.2f}")
 
     def withdraw_money():
-        # Create a new window for the withdrawal input
         withdraw_window = tk.Toplevel(root)
         withdraw_window.title("Withdraw Money")
         withdraw_window.geometry("400x200")
         withdraw_window.configure(bg='#f0f8ff')
 
-        tk.Label(withdraw_window, text="Enter the amount to withdraw:", font=("Arial", 14)).pack(pady=20)
-
+        tk.Label(withdraw_window, text="Enter Withdrawal Amount:", font=("Arial", 14)).pack(pady=10)
         withdraw_entry = tk.Entry(withdraw_window, font=("Arial", 14), width=20)
         withdraw_entry.pack(pady=10)
 
         def confirm_withdraw():
             try:
-                withdraw_amount = float(withdraw_entry.get())
-                if withdraw_amount > account["Account_balance"]:
+                amount = float(withdraw_entry.get())
+                if amount <= 0:
+                    speak("Invalid amount. Please enter a positive number.")
+                    raise ValueError("Invalid amount")
+                if amount > account['Account_balance']:
                     speak("Insufficient balance.")
-                    messagebox.showerror("Error", "Insufficient balance. Please enter a valid amount.")
+                    messagebox.showwarning("Error", "Insufficient balance")
                 else:
-                    account["Account_balance"] -= withdraw_amount
-                    save_account_data(load_account_data())  # Save the updated balance
-                    update_balance_label()  # Refresh the balance display
-                    speak("Transaction successful.")
-                    messagebox.showinfo("Success", "Withdrawal completed successfully.")
+                    account['Account_balance'] -= amount
+                    speak(f"Withdrawal of {amount:.2f} rupees is successful.")
+                    data = load_account_data()
+                    for acc in data['accounts']:
+                        if acc['Account_number'] == account['Account_number']:
+                            acc['Account_balance'] = account['Account_balance']
+                            break
+                    save_account_data(data)
                     withdraw_window.destroy()
+                    messagebox.showinfo("Successfull", "Your withdraw is successfull! Thankyou for using our Services.")
+                    update_balance_label()
+                    speak(f"Your updated balance is {account['Account_balance']:.2f} rupees.")
             except ValueError:
-                messagebox.showerror("Error", "Please enter a valid amount.")
+                speak("Invalid input. Please try again.")
+                messagebox.showwarning("Error", "Invalid input")
 
-        tk.Button(withdraw_window, text="Confirm Withdraw", command=confirm_withdraw, width=15, bg="lightgreen", font=("Arial", 12)).pack(pady=20)
+        tk.Button(withdraw_window, text="Withdraw", command=confirm_withdraw, width=20, bg="lightgreen").pack(pady=10)
 
     def deposit_money():
-        # Create a new window for the deposit input
         deposit_window = tk.Toplevel(root)
         deposit_window.title("Deposit Money")
         deposit_window.geometry("400x200")
         deposit_window.configure(bg='#f0f8ff')
 
-        tk.Label(deposit_window, text="Enter the amount to deposit:", font=("Arial", 14)).pack(pady=20)
-
+        tk.Label(deposit_window, text="Enter Deposit Amount:", font=("Arial", 14)).pack(pady=10)
         deposit_entry = tk.Entry(deposit_window, font=("Arial", 14), width=20)
         deposit_entry.pack(pady=10)
 
         def confirm_deposit():
             try:
-                deposit_amount = float(deposit_entry.get())
-                account["Account_balance"] += deposit_amount
-                save_account_data(load_account_data())  # Save the updated balance
-                update_balance_label()  # Refresh the balance display
-                speak("Transaction successful.")
-                messagebox.showinfo("Success", "Deposit completed successfully.")
+                amount = float(deposit_entry.get())
+                if amount <= 0:
+                    speak("Invalid amount. Please enter a positive number.")
+                    raise ValueError("Invalid amount")
+                account['Account_balance'] += amount
+                speak(f"Deposit of {amount:.2f} rupees is successful.")
+                data = load_account_data()
+                for acc in data['accounts']:
+                    if acc['Account_number'] == account['Account_number']:
+                        acc['Account_balance'] = account['Account_balance']
+                        break
+                save_account_data(data)
                 deposit_window.destroy()
+                update_balance_label()
+                speak(f"Your updated balance is {account['Account_balance']:.2f} rupees.")
             except ValueError:
-                messagebox.showerror("Error", "Please enter a valid amount.")
+                speak("Invalid input. Please try again.")
+                messagebox.showwarning("Error", "Invalid input")
 
-        tk.Button(deposit_window, text="Confirm Deposit", command=confirm_deposit, width=15, bg="lightgreen", font=("Arial", 12)).pack(pady=20)
+        tk.Button(deposit_window, text="Deposit", command=confirm_deposit, width=20, bg="lightgreen").pack(pady=10)
 
-    tk.Button(frame, text="Withdraw Money", command=withdraw_money, width=20, bg="#f4a460", font=("Arial", 14)).pack(pady=10)
-    tk.Button(frame, text="Deposit Money", command=deposit_money, width=20, bg="#90ee90", font=("Arial", 14)).pack(pady=10)
+    tk.Button(frame, text="Withdraw", command=withdraw_money, width=20, bg="lightblue").pack(pady=10)
+    tk.Button(frame, text="Deposit", command=deposit_money, width=20, bg="lightgreen").pack(pady=10)
+    tk.Button(frame, text="Back to Main Menu", command=lambda: show_main_menu(frame, root), width=20, bg="lightgray").pack(pady=10)
 
-def login(frame, root):
+# Function to create the login interface
+def show_login(frame, root):
     for widget in frame.winfo_children():
         widget.destroy()
 
-    tk.Label(frame, text="Login to Account", font=("Arial", 20, "bold")).pack(pady=10)
-    
-    tk.Label(frame, text="Enter Account Number").pack(pady=5)
+    tk.Label(frame, text="Login to Your Account", font=("Arial", 24, "bold")).pack(pady=20)
+
+    tk.Label(frame, text="Account Number").pack(pady=5)
     account_number_entry = tk.Entry(frame, width=40)
     account_number_entry.pack()
 
-    # Function to capitalize alphabetic characters as the user types
-    def capitalize_account_number(event):
-        current_text = account_number_entry.get()
-        account_number_entry.delete(0, tk.END)
-        account_number_entry.insert(0, current_text.upper())
-
-    # Bind the key release event to the capitalize_account_number function
-    account_number_entry.bind("<KeyRelease>", capitalize_account_number)
-
-    tk.Label(frame, text="Enter ATM PIN").pack(pady=5)
-    atm_pin_entry = tk.Entry(frame, show="*", width=40)
+    tk.Label(frame, text="ATM PIN").pack(pady=5)
+    atm_pin_entry = tk.Entry(frame, show='*', width=40)  # Mask the ATM PIN input
     atm_pin_entry.pack()
 
-    def verify_login():
-        account_number = account_number_entry.get()
+    def login():
+        # Get entered values
+        account_number = account_number_entry.get().strip()
         atm_pin = atm_pin_entry.get()
+
+        # Load account data
         data = load_account_data()
-        account = next((acc for acc in data['accounts'] if acc['Account_number'] == account_number and acc['ATM_pin'] == atm_pin), None)
+
+        # Find the account with the provided account number
+        account = next((acc for acc in data['accounts'] if acc['Account_number'] == account_number), None)
+
         if account:
-            handle_transaction(account, frame, root)
+            # Check if the entered PIN matches the stored PIN
+            if account['ATM_pin'] == atm_pin:
+                speak("Login successful.")
+                handle_transaction(account, frame, root)
+            else:
+                speak("Incorrect ATM PIN. Please try again.")
+                messagebox.showerror("Error", "Incorrect ATM PIN")
         else:
-            speak("Invalid credentials. Please try again.")
+            speak("Account not found. Please try again.")
+            messagebox.showerror("Error", "Account not found")
 
-    tk.Button(frame, text="Login", command=verify_login, width=20, bg="lightblue", font=("Arial", 14)).pack(pady=10)
+    # Create login button
+    login_button = tk.Button(frame, text="Login", command=login, width=20, bg="lightblue")
+    login_button.pack(pady=20)
 
+    # Return to main menu button
+    tk.Button(frame, text="Back to Main Menu", command=lambda: show_main_menu(frame, root), width=20, bg="lightgray").pack(pady=10)
+
+# Function to create the main menu interface
 def show_main_menu(frame, root):
     for widget in frame.winfo_children():
         widget.destroy()
 
-    tk.Label(frame, text="Welcome to HDFC Bank", font=("Arial", 24, "bold")).pack(pady=20)
-    tk.Label(frame, text="Please choose an option", font=("Arial", 16)).pack(pady=10)
-
-    tk.Button(frame, text="Register a New Account", command=lambda: register_account(frame, root), width=25, bg='#90ee90', fg='#333', font=("Arial", 14)).pack(pady=10)
-    tk.Button(frame, text="Log in to Existing Account", command=lambda: login(frame, root), width=25, bg='#add8e6', fg='#333', font=("Arial", 14)).pack(pady=10)
-
-def main():
-    global root
-    root = tk.Tk()
-    root.title("HDFC Bank Application")
-    root.geometry("700x600")
-    root.configure(bg='#f0f8ff')
-
-    frame = tk.Frame(root, bg='#f0f8ff')
-    frame.pack(expand=True, fill=tk.BOTH)
-
-    show_main_menu(frame, root)
+    speak("Welcome to my virtual Bank.")
     
-    root.mainloop()
+    tk.Label(frame, text="Virtual Bank", font=("Arial", 24, "bold")).pack(pady=10)
 
-if __name__ == "__main__":
-    main()
+    tk.Button(frame, text="Login", command=lambda: show_login(frame, root), width=30, height=2, bg="lightblue").pack(pady=10)
+    tk.Button(frame, text="Register New Account", command=lambda: register_account(frame, root), width=30, height=2, bg="lightblue").pack(pady=10)
+    tk.Button(frame, text="Exit", command=root.quit, width=30, height=2, bg="lightgray").pack(pady=10)
+
+# Create the main application window
+root = tk.Tk()
+root.title("HDFC Bank")
+root.geometry("400x600")
+
+frame = tk.Frame(root)
+frame.pack(expand=True, fill="both")
+
+show_main_menu(frame, root)
+
+root.mainloop()
