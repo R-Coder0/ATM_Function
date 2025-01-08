@@ -1,6 +1,6 @@
 # Virtual Bank
 
-## Overview
+# Overview
 
 Virtual Bank is a user-friendly application designed to help users manage their banking activities online. It offers features such as account registration, secure transactions, and easy access to account information.
 
